@@ -13,7 +13,7 @@ dir('test/cases').forEach(function(file){
     it('should work', function(){
       var md = read(join('test/cases', file), 'utf8');
       var json = require(resolve('test/cases', file.replace('.md', '.json')));
-      parse(md).should.eql(json);
+      parse(md, { normalize: true }).should.eql(json);
     })
   })
 });

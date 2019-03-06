@@ -22,6 +22,8 @@ module.exports = function(str, options){
   var depth = 0;
   var inlist = false;
 
+  var normalize = options.normalize ? normalizeToLowerCase : function (s) { return s; };
+
   toks.forEach(function(tok){
     switch (tok.type) {
       case 'heading':
@@ -36,13 +38,13 @@ module.exports = function(str, options){
         inlist = false;
         break;
       case 'text':
-        put(conf, keys, tok.text);
+        put(normalize, conf, keys, tok.text);
         break;
       case 'code':
-        put(conf, keys, tok.text, true);
+        put(normalize, conf, keys, tok.text, true);
         break;
       case 'table':
-        put(conf, keys, null, null, {headers: tok.header, rows: tok.cells});
+        put(normalize, conf, keys, null, null, {headers: tok.header, rows: tok.cells});
         break;
     }
   });
@@ -54,6 +56,7 @@ module.exports = function(str, options){
  * Add `str` to `obj` with the given `keys`
  * which represents the traversal path.
  *
+ * @param {function} normalize
  * @param {Object} obj
  * @param {Array} keys
  * @param {String} str
@@ -61,7 +64,7 @@ module.exports = function(str, options){
  * @api private
  */
 
-function put(obj, keys, str, code, table) {
+function put(normalize, obj, keys, str, code, table) {
   var target = obj;
   var last;
   var key;
@@ -112,6 +115,6 @@ function put(obj, keys, str, code, table) {
  * Normalize `str`.
  */
 
-function normalize(str) {
+function normalizeToLowerCase(str) {
   return str.replace(/\s+/g, ' ').toLowerCase().trim();
 }
