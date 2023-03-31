@@ -20,5 +20,6 @@
     "mocha": "^6.0.2",
     "should": "~1.2.2"
   },
-  "main": "index"
+  "main": "index",
+  "types": "index.d.ts"
 }
