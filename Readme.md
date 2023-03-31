@@ -1,25 +1,26 @@
 # mdconf
 
-  Markdown driven configuration!
+Markdown driven configuration!
 
-  Using the fantastic markdown parser [marked](https://github.com/chjj/marked).
+This is a fork of [mdconf](https://github.com/tj/mdconf) by TJ Holowaychuk. This version makes normalization of keys optional.
+
+Using the fantastic markdown parser [marked](https://github.com/chjj/marked).
 
 ## Installation
 
 ```
-$ npm install mdconf
+$ npm install @kristiandupont/mdconf
 ```
-
-## ports
-
-- [Python port](https://github.com/hit9/mdconf.py)
 
 ## API
 
 ```js
-var parse = require('mdconf');
-parse('string of markdown');
+import parse from "mdconf";
+parse("string of markdown");
 // => Object
+
+//..or, if you want to preserve the casing of your keys:
+parse("string of markdown", { normalize: false });
 ```
 
 ## Example
@@ -30,47 +31,47 @@ otherwise regular lists behave as.. lists.
 ```markdown
 # Defaults
 
-  Since this is markdown you can still have regular text
-  to explain what the hell is going on.
+Since this is markdown you can still have regular text
+to explain what the hell is going on.
 
 ## Upload
 
-  - max: 200mb
-  - dir: /tmp
+- max: 200mb
+- dir: /tmp
 
 ### Thumbnail sizes
 
-  - 50x50
-  - 300x300
-  - 600x600
-  - 900x900
+- 50x50
+- 300x300
+- 600x600
+- 900x900
 
 ## S3
 
-  - api key: 111111
-  - secret: 222222
+- api key: 111111
+- secret: 222222
 
 ### Buckets
 
-  - avatars: myapp-avatars
-  - assets: myapp-assets
-  - files: myapp-files
+- avatars: myapp-avatars
+- assets: myapp-assets
+- files: myapp-files
 
 # Production
 
 ## Upload
 
-  - max: 1gb
-  - dir: /data/uploads
+- max: 1gb
+- dir: /data/uploads
 
 ## Sites
 
-| hostname     | build   | coverage  |
-| :----------- | :------:| --------: |
-| google.com   | passing |       94% |
-| facebook.com | passing |       97% |
-| twitter.com  | failed  |       81% |
-| myspace.com  | unkown  |       0%  |
+| hostname     |  build  | coverage |
+| :----------- | :-----: | -------: |
+| google.com   | passing |      94% |
+| facebook.com | passing |      97% |
+| twitter.com  | failed  |      81% |
+| myspace.com  | unkown  |       0% |
 ```
 
 output json:
@@ -81,12 +82,7 @@ output json:
     "upload": {
       "max": "200mb",
       "dir": "/tmp",
-      "thumbnail sizes": [
-        "50x50",
-        "300x300",
-        "600x600",
-        "900x900"
-      ]
+      "thumbnail sizes": ["50x50", "300x300", "600x600", "900x900"]
     },
     "s3": {
       "api key": "111111",
@@ -129,35 +125,34 @@ output json:
 }
 ```
 
-  With markdown blocks you could easily use this as a tool for
-  static site generation:
+With markdown blocks you could easily use this as a tool for
+static site generation:
 
 ```md
-
 # Scripts
 
-  My site does almost nothing:
+My site does almost nothing:
 
     document.write('<h1>mdconf</h1>')
     document.write('<p>Markdown configuration is pretty cool</p>')
 
 # Styles
 
-  Main structural styling:
+Main structural styling:
 
     body {
       padding: 50px;
       font: 14px Helvetica;
     }
 
-  Some other stuff:
+Some other stuff:
 
     button {
       padding: 15px;
     }
 ```
 
- yields:
+yields:
 
 ```js
 {
