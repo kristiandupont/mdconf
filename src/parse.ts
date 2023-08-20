@@ -45,8 +45,8 @@ function parse(source: string, options?: ParseOptions): unknown {
 
 function drillDown(obj: any, keys: string[]) {
   let target = obj;
-  let last;
-  let key;
+  let last: any;
+  let key: string = '(root)';
 
   for (const key_ of keys) {
     key = key_;
@@ -105,7 +105,7 @@ function putTable(
 
   if (!Array.isArray(last[key])) last[key] = [];
   for (let ri = 0; ri < table.rows.length; ri++) {
-    const arrItem = {};
+    const arrItem: Record<string, string> = {};
     for (let hi = 0; hi < table.header.length; hi++) {
       arrItem[normalize(table.header[hi].text)] = table.rows[ri][hi].text;
     }

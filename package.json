@@ -1,6 +1,6 @@
 {
   "name": "@kristiandupont/mdconf",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Markdown configuration",
   "keywords": [
     "conf",
@@ -18,7 +18,8 @@
   },
   "scripts": {
     "lint": "eslint . -f visualstudio --report-unused-disable-directives --ext .js,.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "tsc"
   },
   "dependencies": {
     "@types/marked": "^5.0.1",
@@ -29,6 +30,9 @@
     "@kristiandupont/dev-deps": "^2.5.0",
     "@kristiandupont/recase": "^1.2.0"
   },
-  "main": "index",
-  "types": "index.d.ts"
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ]
 }
