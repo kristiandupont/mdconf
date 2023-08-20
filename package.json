@@ -16,12 +16,18 @@
     "type": "git",
     "url": "git://github.com/visionmedia/mdconf.git"
   },
-  "dependencies": {
-    "marked": "^0.6.1"
+  "scripts": {
+    "lint": "eslint . -f visualstudio --report-unused-disable-directives --ext .js,.ts",
+    "test": "vitest run"
   },
+  "dependencies": {
+    "@types/marked": "^5.0.1",
+    "marked": "^5.1.1"
+  },
+  "prettier": "@kristiandupont/prettier-config",
   "devDependencies": {
-    "mocha": "^6.0.2",
-    "should": "~1.2.2"
+    "@kristiandupont/dev-deps": "^2.5.0",
+    "@kristiandupont/recase": "^1.2.0"
   },
   "main": "index",
   "types": "index.d.ts"

@@ -2,9 +2,8 @@
 
 Markdown driven configuration!
 
-This is a fork of [mdconf](https://github.com/tj/mdconf) by TJ Holowaychuk. This version makes normalization of keys optional.
-
-Using the fantastic markdown parser [marked](https://github.com/chjj/marked).
+This is a fork of [mdconf](https://github.com/tj/mdconf) by TJ Holowaychuk.
+The original project seems abandoned, so this version has updated dependencies and the possibility to specify how key names should be normalized.
 
 ## Installation
 
@@ -15,12 +14,15 @@ $ npm install @kristiandupont/mdconf
 ## API
 
 ```js
-import parse from "mdconf";
-parse("string of markdown");
+import parse from 'mdconf';
+
+parse('string of markdown');
 // => Object
 
-//..or, if you want to preserve the casing of your keys:
-parse("string of markdown", { normalize: false });
+//..or, if you want to normalize key names to lower case:
+parse('string of markdown', {
+  keyNormalizationFunction: (s) => s.toLowercase(),
+});
 ```
 
 ## Example
@@ -125,52 +127,12 @@ output json:
 }
 ```
 
-With markdown blocks you could easily use this as a tool for
-static site generation:
-
-```md
-# Scripts
-
-My site does almost nothing:
-
-    document.write('<h1>mdconf</h1>')
-    document.write('<p>Markdown configuration is pretty cool</p>')
-
-# Styles
-
-Main structural styling:
-
-    body {
-      padding: 50px;
-      font: 14px Helvetica;
-    }
-
-Some other stuff:
-
-    button {
-      padding: 15px;
-    }
-```
-
-yields:
-
-```js
-{
-  "scripts": [
-    "document.write('<h1>mdconf</h1>')\ndocument.write('<p>Markdown configuration is pretty cool</p>')"
-  ],
-  "styles": [
-    "body {\n  padding: 50px;\n  font: 14px Helvetica;\n}",
-    "button {\n  padding: 15px;\n}"
-  ]
-}
-```
-
 ## License
 
 (The MIT License)
 
 Copyright (c) 2013 TJ Holowaychuk &lt;tj@vision-media.ca&gt;
+Copyright (c) 2023 Kristian Dupont &lt;kristian@kristiandupont.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

@@ -1,14 +1,13 @@
-
 # Scripts
 
 ```js
-document.write('<h1>mdconf</h1>')
-document.write('<p>Markdown configuration is pretty cool</p>')
+document.write('<h1>mdconf</h1>');
+document.write('<p>Markdown configuration is pretty cool</p>');
 ```
 
 # Styles
 
-  Main structural styling:
+Main structural styling:
 
 ```css
 body {
@@ -17,7 +16,7 @@ body {
 }
 ```
 
-  Some other stuff:
+Some other stuff:
 
 ```css
 button {

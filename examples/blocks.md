@@ -1,4 +1,3 @@
-
 # Scripts
 
     document.write('<h1>mdconf</h1>')
@@ -6,14 +5,14 @@
 
 # Styles
 
-  Main structural styling:
+Main structural styling:
 
     body {
       padding: 50px;
       font: 14px Helvetica;
     }
 
-  Some other stuff:
+Some other stuff:
 
     button {
       padding: 15px;
