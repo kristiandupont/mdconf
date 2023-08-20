@@ -1,6 +1,6 @@
 {
   "name": "@kristiandupont/mdconf",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Markdown configuration",
   "keywords": [
     "conf",
@@ -14,7 +14,7 @@
   "author": "TJ Holowaychuk <tj@vision-media.ca>",
   "repository": {
     "type": "git",
-    "url": "git://github.com/visionmedia/mdconf.git"
+    "url": "https://github.com/kristiandupont/mdconf"
   },
   "scripts": {
     "lint": "eslint . -f visualstudio --report-unused-disable-directives --ext .js,.ts",
