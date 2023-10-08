@@ -1,22 +1,22 @@
-import { recase } from '@kristiandupont/recase';
-import { describe, expect, test } from 'vitest';
+import { recase } from "@kristiandupont/recase";
+import { describe, expect, test } from "vitest";
 
-import parse from './parse';
+import parse from "./parse";
 
-const keyNormalizationFunction = recase('mixed', 'camel');
+const keyNormalizationFunction = recase("mixed", "camel");
 
-describe('parse', () => {
+describe("parse", () => {
   // These tests are from the original mdconf repo.
   // You can find the raw markdown in the examples folder.
-  describe('Original tests', () => {
-    test('empty', () => {
-      const source = '';
+  describe("Original tests", () => {
+    test("empty", () => {
+      const source = "";
       const expected = {};
       const actual = parse(source, { keyNormalizationFunction });
       expect(actual).toEqual(expected);
     });
 
-    test('simple', () => {
+    test("simple", () => {
       const source = `
 ## Uploads
 
@@ -29,9 +29,9 @@ describe('parse', () => {
 
       const expected = {
         uploads: {
-          max: '200mb',
-          min: '1kb',
-          dir: '/tmp/uploads',
+          max: "200mb",
+          min: "1kb",
+          dir: "/tmp/uploads",
         },
       };
 
@@ -39,7 +39,7 @@ describe('parse', () => {
       expect(actual).toEqual(expected);
     });
 
-    test('blocks', () => {
+    test("blocks", () => {
       const source = `
 # Styles
 
@@ -57,8 +57,8 @@ And some styles for buttons:
 `;
       const expected = {
         styles: [
-          'body {\n  padding: 50px;\n}',
-          'button {\n  padding: 5px 10px;\n}',
+          "body {\n  padding: 50px;\n}",
+          "button {\n  padding: 5px 10px;\n}",
         ],
       };
 
@@ -66,42 +66,42 @@ And some styles for buttons:
       expect(actual).toEqual(expected);
     });
 
-    test('blocks-gh', () => {
+    test("blocks-gh", () => {
       const source = [
-        '# Scripts',
-        '',
-        '```js',
+        "# Scripts",
+        "",
+        "```js",
         "document.write('<h1>mdconf</h1>');",
         "document.write('<p>Markdown configuration is pretty cool</p>');",
-        '```',
-        '',
-        '# Styles',
-        '',
-        'Main structural styling:',
-        '',
-        '```css',
-        'body {',
-        '  padding: 50px;',
-        '  font: 14px Helvetica;',
-        '}',
-        '```',
-        '',
-        'Some other stuff:',
-        '',
-        '```css',
-        'button {',
-        '  padding: 15px;',
-        '}',
-        '```',
-      ].join('\n');
+        "```",
+        "",
+        "# Styles",
+        "",
+        "Main structural styling:",
+        "",
+        "```css",
+        "body {",
+        "  padding: 50px;",
+        "  font: 14px Helvetica;",
+        "}",
+        "```",
+        "",
+        "Some other stuff:",
+        "",
+        "```css",
+        "button {",
+        "  padding: 15px;",
+        "}",
+        "```",
+      ].join("\n");
 
       const expected = {
         scripts: [
           "document.write('<h1>mdconf</h1>');\ndocument.write('<p>Markdown configuration is pretty cool</p>');",
         ],
         styles: [
-          'body {\n  padding: 50px;\n  font: 14px Helvetica;\n}',
-          'button {\n  padding: 15px;\n}',
+          "body {\n  padding: 50px;\n  font: 14px Helvetica;\n}",
+          "button {\n  padding: 15px;\n}",
         ],
       };
 
@@ -109,7 +109,7 @@ And some styles for buttons:
       expect(actual).toEqual(expected);
     });
 
-    test('table', () => {
+    test("table", () => {
       const source = `
 ## Sites
 
@@ -124,24 +124,24 @@ And some styles for buttons:
       const expected = {
         sites: [
           {
-            host: 'google.com',
-            build: 'passing',
-            coverage: '94%',
+            host: "google.com",
+            build: "passing",
+            coverage: "94%",
           },
           {
-            host: 'facebook.com',
-            build: 'passing',
-            coverage: '97%',
+            host: "facebook.com",
+            build: "passing",
+            coverage: "97%",
           },
           {
-            host: 'twitter.com',
-            build: 'failed',
-            coverage: '81%',
+            host: "twitter.com",
+            build: "failed",
+            coverage: "81%",
           },
           {
-            host: 'myspace.com',
-            build: 'unkown',
-            coverage: '0%',
+            host: "myspace.com",
+            build: "unkown",
+            coverage: "0%",
           },
         ],
       };
@@ -150,7 +150,7 @@ And some styles for buttons:
       expect(actual).toEqual(expected);
     });
 
-    test('complex', () => {
+    test("complex", () => {
       const source = `
 # Defaults
 
@@ -196,44 +196,44 @@ And some styles for buttons:
       const expected = {
         defaults: {
           upload: {
-            max: '200mb',
-            dir: '/tmp',
-            'thumbnail sizes': ['50x50', '300x300', '600x600', '900x900'],
+            max: "200mb",
+            dir: "/tmp",
+            "thumbnail sizes": ["50x50", "300x300", "600x600", "900x900"],
           },
           s3: {
-            'api key': '111111',
-            secret: '222222',
+            "api key": "111111",
+            secret: "222222",
             buckets: {
-              avatars: 'myapp-avatars',
-              assets: 'myapp-assets',
-              files: 'myapp-files',
+              avatars: "myapp-avatars",
+              assets: "myapp-assets",
+              files: "myapp-files",
             },
           },
         },
         production: {
           upload: {
-            max: '200mb',
+            max: "200mb",
           },
           sites: [
             {
-              hostname: 'google.com',
-              build: 'passing',
-              coverage: '94%',
+              hostname: "google.com",
+              build: "passing",
+              coverage: "94%",
             },
             {
-              hostname: 'facebook.com',
-              build: 'passing',
-              coverage: '97%',
+              hostname: "facebook.com",
+              build: "passing",
+              coverage: "97%",
             },
             {
-              hostname: 'twitter.com',
-              build: 'failed',
-              coverage: '81%',
+              hostname: "twitter.com",
+              build: "failed",
+              coverage: "81%",
             },
             {
-              hostname: 'myspace.com',
-              build: 'unkown',
-              coverage: '0%',
+              hostname: "myspace.com",
+              build: "unkown",
+              coverage: "0%",
             },
           ],
         },

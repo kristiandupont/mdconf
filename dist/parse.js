@@ -10,26 +10,26 @@ function parse(source, options) {
     const normalize = (_a = options === null || options === void 0 ? void 0 : options.keyNormalizationFunction) !== null && _a !== void 0 ? _a : ((s) => s.trim());
     for (const token of tokens) {
         switch (token.type) {
-            case 'heading': {
+            case "heading": {
                 while (depth-- >= token.depth)
                     keys.pop();
                 keys.push(normalize(token.text));
                 depth = token.depth;
                 break;
             }
-            case 'text': {
+            case "text": {
                 putText(normalize, result, keys, token.text);
                 break;
             }
-            case 'code': {
+            case "code": {
                 putCode(normalize, result, keys, token.text);
                 break;
             }
-            case 'table': {
+            case "table": {
                 putTable(normalize, result, keys, token);
                 break;
             }
-            case 'list': {
+            case "list": {
                 putList(normalize, result, keys, token.items);
                 break;
             }
@@ -40,7 +40,7 @@ function parse(source, options) {
 function drillDown(obj, keys) {
     let target = obj;
     let last;
-    let key = '(root)';
+    let key = "(root)";
     for (const key_ of keys) {
         key = key_;
         last = target;
@@ -53,7 +53,7 @@ function putList(normalize, result, keys, list) {
     const { last, key, target } = drillDown(result, keys);
     for (const item of list) {
         const str = item.text;
-        const i = str.indexOf(':');
+        const i = str.indexOf(":");
         // list
         if (i === -1) {
             if (!Array.isArray(last[key]))
@@ -87,7 +87,7 @@ function putTable(normalize, result, keys, table) {
 }
 function putText(normalize, result, keys, str) {
     const { last, key, target } = drillDown(result, keys);
-    const i = str.indexOf(':');
+    const i = str.indexOf(":");
     // list
     if (-1 == i) {
         if (!Array.isArray(last[key]))

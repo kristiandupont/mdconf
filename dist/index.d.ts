@@ -1,1 +1,1 @@
-export { default } from './parse';
+export { default } from "./parse";

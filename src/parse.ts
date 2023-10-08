@@ -1,4 +1,4 @@
-import { marked } from 'marked';
+import { marked, Tokens } from "marked";
 
 type ParseOptions = {
   keyNormalizationFunction?: (s: string) => string;
@@ -15,25 +15,25 @@ function parse(source: string, options?: ParseOptions): unknown {
 
   for (const token of tokens) {
     switch (token.type) {
-      case 'heading': {
+      case "heading": {
         while (depth-- >= token.depth) keys.pop();
         keys.push(normalize(token.text));
         depth = token.depth;
         break;
       }
-      case 'text': {
+      case "text": {
         putText(normalize, result, keys, token.text);
         break;
       }
-      case 'code': {
+      case "code": {
         putCode(normalize, result, keys, token.text);
         break;
       }
-      case 'table': {
-        putTable(normalize, result, keys, token);
+      case "table": {
+        putTable(normalize, result, keys, token as Tokens.Table);
         break;
       }
-      case 'list': {
+      case "list": {
         putList(normalize, result, keys, token.items);
         break;
       }
@@ -46,7 +46,7 @@ function parse(source: string, options?: ParseOptions): unknown {
 function drillDown(obj: any, keys: string[]) {
   let target = obj;
   let last: any;
-  let key: string = '(root)';
+  let key: string = "(root)";
 
   for (const key_ of keys) {
     key = key_;
@@ -61,13 +61,13 @@ function putList(
   normalize: (s: string) => string,
   result: unknown,
   keys: string[],
-  list: marked.Tokens.ListItem[],
+  list: Tokens.ListItem[]
 ) {
   const { last, key, target } = drillDown(result, keys);
 
   for (const item of list) {
     const str = item.text;
-    const i = str.indexOf(':');
+    const i = str.indexOf(":");
 
     // list
     if (i === -1) {
@@ -87,7 +87,7 @@ function putCode(
   normalize: (s: string) => string,
   result: unknown,
   keys: string[],
-  str: string,
+  str: string
 ) {
   const { last, key } = drillDown(result, keys);
 
@@ -99,7 +99,7 @@ function putTable(
   normalize: (s: string) => string,
   result: unknown,
   keys: string[],
-  table: marked.Tokens.Table,
+  table: Tokens.Table
 ) {
   const { last, key } = drillDown(result, keys);
 
@@ -117,11 +117,11 @@ function putText(
   normalize: (s: string) => string,
   result: unknown,
   keys: string[],
-  str: string,
+  str: string
 ) {
   const { last, key, target } = drillDown(result, keys);
 
-  const i = str.indexOf(':');
+  const i = str.indexOf(":");
 
   // list
   if (-1 == i) {

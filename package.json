@@ -22,13 +22,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@types/marked": "^5.0.1",
-    "marked": "^5.1.1"
+    "marked": "^9.1.0"
   },
-  "prettier": "@kristiandupont/prettier-config",
   "devDependencies": {
-    "@kristiandupont/dev-deps": "^2.5.0",
-    "@kristiandupont/recase": "^1.2.0"
+    "@kristiandupont/dev-deps": "^2.10.0",
+    "@kristiandupont/recase": "^1.2.1"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
