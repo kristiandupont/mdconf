@@ -22,7 +22,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "marked": "^9.1.0"
+    "marked": "^10.0.0"
   },
   "devDependencies": {
     "@kristiandupont/dev-deps": "^2.10.0",
