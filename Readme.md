@@ -14,13 +14,13 @@ $ npm install @kristiandupont/mdconf
 ## API
 
 ```js
-import parse from 'mdconf';
+import parse from "mdconf";
 
-parse('string of markdown');
+parse("string of markdown");
 // => Object
 
 //..or, if you want to normalize key names to lower case:
-parse('string of markdown', {
+parse("string of markdown", {
   keyNormalizationFunction: (s) => s.toLowercase(),
 });
 ```
