@@ -1,9 +1,15 @@
 import { recase } from "@kristiandupont/recase";
 import { describe, expect, test } from "vitest";
+import { z } from "zod";
 
 import parse from "./parse";
 
 const keyNormalizationFunction = recase("mixed", "camel");
+
+// Typescript type assertion:
+function assertSameType<T>(a: T, b: T): T {
+  return b; // This function doesn't need to do anything at runtime
+}
 
 describe("parse", () => {
   // These tests are from the original mdconf repo.
@@ -241,6 +247,98 @@ And some styles for buttons:
 
       const actual = parse(source, { keyNormalizationFunction });
       expect(actual).toEqual(expected);
+    });
+  });
+
+  describe("Validation", () => {
+    test("Generic validator", () => {
+      const expected = {
+        config: {
+          filename: "config.json",
+          port: "3000",
+        },
+        resolutions: ["100", "200", "300"],
+      };
+
+      function validator(obj: unknown): typeof expected {
+        expect(obj).toEqual(expected);
+        return obj as typeof expected;
+      }
+
+      const validSource = `
+# Config
+- filename: config.json
+- port: 3000
+
+# Resolutions
+- 100
+- 200
+- 300
+`;
+
+      const actual = parse(validSource, {
+        keyNormalizationFunction,
+        validator,
+      });
+      expect(actual).toEqual(expected);
+      assertSameType(actual, expected);
+
+      const invalidSource = `
+# Configuration
+- filename: config.json
+`;
+
+      expect(() =>
+        parse(invalidSource, { keyNormalizationFunction, validator }),
+      ).toThrow();
+    });
+
+    test("Zod validator", () => {
+      const schema = z.object({
+        config: z.object({
+          filename: z.string(),
+          port: z.string(),
+        }),
+        resolutions: z.array(z.string()),
+      });
+
+      const expected = {
+        config: {
+          filename: "config.json",
+          port: "3000",
+        },
+        resolutions: ["100", "200", "300"],
+      };
+
+      const validSource = `
+# Config
+- filename: config.json
+- port: 3000
+
+# Resolutions
+- 100
+- 200
+- 300
+`;
+
+      const actual = parse(validSource, {
+        keyNormalizationFunction,
+        validator: schema,
+      });
+      expect(actual).toEqual(expected);
+      assertSameType(actual, expected);
+
+      const invalidSource = `
+# Configuration
+- filename: config.json
+`;
+
+      expect(() =>
+        parse(invalidSource, {
+          keyNormalizationFunction,
+          validator: schema,
+        }),
+      ).toThrow();
     });
   });
 });
