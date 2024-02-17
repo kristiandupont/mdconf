@@ -1,4 +1,4 @@
-import { marked, Tokens } from "marked";
+import { marked, type Tokens } from "marked";
 
 type ParseOptions = {
   keyNormalizationFunction?: (s: string) => string;
@@ -61,7 +61,7 @@ function putList(
   normalize: (s: string) => string,
   result: unknown,
   keys: string[],
-  list: Tokens.ListItem[],
+  list: Tokens.ListItem[]
 ) {
   const { last, key, target } = drillDown(result, keys);
 
@@ -87,7 +87,7 @@ function putCode(
   normalize: (s: string) => string,
   result: unknown,
   keys: string[],
-  str: string,
+  str: string
 ) {
   const { last, key } = drillDown(result, keys);
 
@@ -99,7 +99,7 @@ function putTable(
   normalize: (s: string) => string,
   result: unknown,
   keys: string[],
-  table: Tokens.Table,
+  table: Tokens.Table
 ) {
   const { last, key } = drillDown(result, keys);
 
@@ -117,7 +117,7 @@ function putText(
   normalize: (s: string) => string,
   result: unknown,
   keys: string[],
-  str: string,
+  str: string
 ) {
   const { last, key, target } = drillDown(result, keys);
 
