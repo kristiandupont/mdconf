@@ -1,4 +1,4 @@
-import { marked, Tokens } from "marked";
+import { marked, type Tokens } from "marked";
 
 type ParseOptions = {
   keyNormalizationFunction?: (s: string) => string;
