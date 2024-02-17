@@ -1,10 +1,14 @@
 import { marked, type Tokens } from "marked";
 
-type ParseOptions = {
-  keyNormalizationFunction?: (s: string) => string;
-};
+type Validator<T> = ((obj: unknown) => T) | { parse: (obj: unknown) => T };
 
-function parse(source: string, options?: ParseOptions): unknown {
+function parse<T = unknown>(
+  source: string,
+  options?: {
+    keyNormalizationFunction?: (s: string) => string;
+    validator?: Validator<T>;
+  },
+): T {
   const tokens = marked.lexer(source);
   const result = {};
   const keys: string[] = [];
@@ -40,7 +44,14 @@ function parse(source: string, options?: ParseOptions): unknown {
     }
   }
 
-  return result;
+  if (options?.validator) {
+    if (typeof options.validator === "object") {
+      return options.validator.parse(result);
+    }
+    return options.validator(result);
+  }
+
+  return result as T;
 }
 
 function drillDown(obj: any, keys: string[]) {

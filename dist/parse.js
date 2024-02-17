@@ -35,6 +35,12 @@ function parse(source, options) {
             }
         }
     }
+    if (options === null || options === void 0 ? void 0 : options.validator) {
+        if (typeof options.validator === "object") {
+            return options.validator.parse(result);
+        }
+        return options.validator(result);
+    }
     return result;
 }
 function drillDown(obj, keys) {
