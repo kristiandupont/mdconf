@@ -1,4 +1,4 @@
-import { marked, Tokens } from "marked";
+import { marked, type Tokens } from "marked";
 
 type Validator<T> = ((obj: unknown) => T) | { parse: (obj: unknown) => T };
 
