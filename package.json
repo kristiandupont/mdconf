@@ -30,6 +30,14 @@
     "@kristiandupont/recase": "^1.2.1",
     "zod": "^3.22.4"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-darwin-arm64": "4.34.6",
+    "@rollup/rollup-darwin-x64": "4.34.6",
+    "@rollup/rollup-win32-arm64-msvc": "4.34.6",
+    "@rollup/rollup-win32-x64-msvc": "4.34.6",
+    "@rollup/rollup-linux-arm64-gnu": "4.34.6",
+    "@rollup/rollup-linux-x64-gnu": "4.34.6"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
