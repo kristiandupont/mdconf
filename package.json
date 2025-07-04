@@ -36,7 +36,7 @@
     "@rollup/rollup-win32-arm64-msvc": "4.41.1",
     "@rollup/rollup-win32-x64-msvc": "4.41.1",
     "@rollup/rollup-linux-arm64-gnu": "4.41.1",
-    "@rollup/rollup-linux-x64-gnu": "4.41.1"
+    "@rollup/rollup-linux-x64-gnu": "4.44.2"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
