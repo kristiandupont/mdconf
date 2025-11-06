@@ -22,7 +22,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "marked": "^15.0.0"
+    "marked": "^16.0.0"
   },
   "devDependencies": {
     "@eslint/compat": "^1.2.7",
