@@ -26,10 +26,20 @@ const schema = z.object({
 
 //..or, pass options as the second parameter
 parse("string of markdown", {
-  keyNormalizationFunction: (s) => s.toLowercase(),
+  keyNormalizationFunction: (s) => s.toLowerCase(),
   validator: schema,
 });
 ```
+
+### Validators
+
+`validator` accepts any of:
+
+- A [Standard Schema](https://standardschema.dev) such as zod (3.24+), valibot or ArkType. If validation fails, `parse` throws a `ValidationError` whose `issues` property contains the issues reported by the schema. Asynchronous schemas (for example with async refinements) are not supported and cause `parse` to throw.
+- An object with a `parse(obj)` method that returns the validated value or throws.
+- A function `(obj) => value` that returns the validated value or throws.
+
+The return type of `parse` is the output type of the validator.
 
 ## Example
 

@@ -1,13 +1,82 @@
 import { marked, type Tokens } from "marked";
 
-type Validator<T> = ((obj: unknown) => T) | { parse: (obj: unknown) => T };
+import type { StandardSchemaV1 } from "./standard-schema";
 
+export type Validator<T> =
+  | StandardSchemaV1<unknown, T>
+  | ((obj: unknown) => T)
+  | { parse: (obj: unknown) => T };
+
+/** Thrown when a Standard Schema validator reports issues. */
+export class ValidationError extends Error {
+  readonly issues: ReadonlyArray<StandardSchemaV1.Issue>;
+
+  constructor(issues: ReadonlyArray<StandardSchemaV1.Issue>) {
+    super(
+      "Validation failed:\n" +
+        issues.map((issue) => `  ${formatIssue(issue)}`).join("\n"),
+    );
+    this.name = "ValidationError";
+    this.issues = issues;
+  }
+}
+
+function formatIssue(issue: StandardSchemaV1.Issue): string {
+  if (!issue.path || issue.path.length === 0) return issue.message;
+  const path = issue.path
+    .map((segment) =>
+      String(typeof segment === "object" ? segment.key : segment),
+    )
+    .join(".");
+  return `${path}: ${issue.message}`;
+}
+
+function validate<T>(validator: Validator<T>, obj: unknown): T {
+  // Check for Standard Schema first: some libraries (e.g. ArkType) produce
+  // schemas that are also callable, and zod schemas also have `.parse`.
+  if ("~standard" in validator) {
+    const result = validator["~standard"].validate(obj);
+    if ("then" in result && typeof result.then === "function") {
+      throw new TypeError(
+        "mdconf does not support asynchronous validators; use a schema without async refinements or transforms.",
+      );
+    }
+    const syncResult = result as StandardSchemaV1.Result<T>;
+    if (syncResult.issues) throw new ValidationError(syncResult.issues);
+    return syncResult.value;
+  }
+  if (typeof validator === "function") return validator(obj);
+  return validator.parse(obj);
+}
+
+/**
+ * The type a validator returns. Standard Schema is checked first so that
+ * schemas which are also callable (e.g. ArkType) use the schema's output type.
+ */
+export type ValidatorOutput<V> =
+  V extends StandardSchemaV1<any, infer O>
+    ? O
+    : V extends (obj: unknown) => infer O
+      ? O
+      : V extends { parse: (obj: unknown) => infer O }
+        ? O
+        : never;
+
+type ParseOptions = {
+  keyNormalizationFunction?: (s: string) => string;
+};
+
+function parse<V extends Validator<unknown>>(
+  source: string,
+  options: ParseOptions & { validator: V },
+): ValidatorOutput<V>;
 function parse<T = unknown>(
   source: string,
-  options?: {
-    keyNormalizationFunction?: (s: string) => string;
-    validator?: Validator<T>;
-  },
+  options?: ParseOptions & { validator?: Validator<T> },
+): T;
+function parse<T>(
+  source: string,
+  options?: ParseOptions & { validator?: Validator<T> },
 ): T {
   const tokens = marked.lexer(source);
   const result = {};
@@ -44,12 +113,7 @@ function parse<T = unknown>(
     }
   }
 
-  if (options?.validator) {
-    if (typeof options.validator === "object") {
-      return options.validator.parse(result);
-    }
-    return options.validator(result);
-  }
+  if (options?.validator) return validate(options.validator, result);
 
   return result as T;
 }

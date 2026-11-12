@@ -1,10 +1,28 @@
-import { recase } from "@kristiandupont/recase";
 import { describe, expect, test } from "vitest";
-import { z } from "zod";
 
-import parse from "./parse";
+import parse, { ValidationError } from "./parse";
+import type { StandardSchemaV1 } from "./standard-schema";
 
-const keyNormalizationFunction = recase("mixed", "camel");
+// Lowercases the first letter, e.g. "Thumbnail sizes" becomes "thumbnail sizes".
+function keyNormalizationFunction(s: string): string {
+  const trimmed = s.trim();
+  return trimmed.charAt(0).toLowerCase() + trimmed.slice(1);
+}
+
+type Config = {
+  config: { filename: string; port: string };
+  resolutions: string[];
+};
+
+// Minimal hand-written check, standing in for a schema library.
+function checkConfig(obj: unknown): string[] {
+  const o = obj as Record<string, any>;
+  const problems: string[] = [];
+  if (typeof o?.config?.filename !== "string") problems.push("config.filename");
+  if (typeof o?.config?.port !== "string") problems.push("config.port");
+  if (!Array.isArray(o?.resolutions)) problems.push("resolutions");
+  return problems;
+}
 
 // Typescript type assertion:
 function assertSameType<T>(a: T, b: T): T {
@@ -251,6 +269,30 @@ And some styles for buttons:
   });
 
   describe("Validation", () => {
+    const expected: Config = {
+      config: {
+        filename: "config.json",
+        port: "3000",
+      },
+      resolutions: ["100", "200", "300"],
+    };
+
+    const validSource = `
+# Config
+- filename: config.json
+- port: 3000
+
+# Resolutions
+- 100
+- 200
+- 300
+`;
+
+    const invalidSource = `
+# Configuration
+- filename: config.json
+`;
+
     test("Generic validator", () => {
       const expected = {
         config: {
@@ -293,33 +335,14 @@ And some styles for buttons:
       ).toThrow();
     });
 
-    test("Zod validator", () => {
-      const schema = z.object({
-        config: z.object({
-          filename: z.string(),
-          port: z.string(),
-        }),
-        resolutions: z.array(z.string()),
-      });
-
-      const expected = {
-        config: {
-          filename: "config.json",
-          port: "3000",
+    test("Object with parse method", () => {
+      const schema = {
+        parse(obj: unknown): Config {
+          const problems = checkConfig(obj);
+          if (problems.length > 0) throw new Error(problems.join(", "));
+          return obj as Config;
         },
-        resolutions: ["100", "200", "300"],
       };
-
-      const validSource = `
-# Config
-- filename: config.json
-- port: 3000
-
-# Resolutions
-- 100
-- 200
-- 300
-`;
 
       const actual = parse(validSource, {
         keyNormalizationFunction,
@@ -328,17 +351,91 @@ And some styles for buttons:
       expect(actual).toEqual(expected);
       assertSameType(actual, expected);
 
-      const invalidSource = `
-# Configuration
-- filename: config.json
-`;
-
       expect(() =>
-        parse(invalidSource, {
-          keyNormalizationFunction,
-          validator: schema,
-        }),
-      ).toThrow();
+        parse(invalidSource, { keyNormalizationFunction, validator: schema }),
+      ).toThrow("config.filename");
+    });
+
+    test("Standard Schema validator", () => {
+      const schema: StandardSchemaV1<unknown, Config> = {
+        "~standard": {
+          version: 1,
+          vendor: "test",
+          validate(obj) {
+            const problems = checkConfig(obj);
+            if (problems.length > 0) {
+              return {
+                issues: problems.map((p) => ({
+                  message: "Required",
+                  path: p.split("."),
+                })),
+              };
+            }
+            return { value: obj as Config };
+          },
+        },
+      };
+
+      const actual = parse(validSource, {
+        keyNormalizationFunction,
+        validator: schema,
+      });
+      expect(actual).toEqual(expected);
+      assertSameType(actual, expected);
+
+      let error: unknown;
+      try {
+        parse(invalidSource, { keyNormalizationFunction, validator: schema });
+      } catch (e) {
+        error = e;
+      }
+      expect(error).toBeInstanceOf(ValidationError);
+      expect((error as ValidationError).issues).toHaveLength(3);
+      expect((error as ValidationError).message).toContain(
+        "config.filename: Required",
+      );
+    });
+
+    test("Standard Schema validator is preferred over parse and call", () => {
+      // Like an ArkType schema: callable, returning the value or an error
+      // object, and also a Standard Schema.
+      const schema = Object.assign(
+        (_obj: unknown): Config | { error: string } => {
+          throw new Error("called as function");
+        },
+        {
+          parse(_obj: unknown): Config | { error: string } {
+            throw new Error("called parse");
+          },
+          "~standard": {
+            version: 1 as const,
+            vendor: "test",
+            validate: (obj: unknown) => ({ value: obj as Config }),
+          },
+        },
+      );
+
+      // Fails type checking if the output type is taken from the call
+      // signature or from parse() instead of from the Standard Schema.
+      const actual: Config = parse(validSource, {
+        keyNormalizationFunction,
+        validator: schema,
+      });
+      expect(actual).toEqual(expected);
+    });
+
+    test("Async Standard Schema validator throws", () => {
+      const schema: StandardSchemaV1<unknown, Config> = {
+        "~standard": {
+          version: 1,
+          vendor: "test",
+          validate: async (obj) => ({ value: obj as Config }),
+        },
+      };
+
+      expect(() => parse(validSource, { validator: schema })).toThrow(
+        "does not support asynchronous validators",
+      );
     });
   });
 });
